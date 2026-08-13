@@ -1,0 +1,68 @@
+{
+  "name": "@walletbureau/mcp",
+  "version": "0.1.0",
+  "mcpName": "com.walletbureau/mcp",
+  "type": "module",
+  "description": "MCP server for WalletBureau: check the behavioral risk score of a Base wallet before paying it. Pay per call with x402 or a prepaid API key.",
+  "license": "Apache-2.0",
+  "homepage": "https://walletbureau.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walletbureau/mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/walletbureau/mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "x402",
+    "base",
+    "usdc",
+    "wallet",
+    "risk",
+    "counterparty",
+    "agent-payments"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "walletbureau-mcp": "./dist/cli.js"
+  },
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.js",
+    "!dist/**/*.test.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "node --test \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@x402/core": "^2.21.0",
+    "@x402/evm": "^2.21.0",
+    "@x402/fetch": "^2.21.0",
+    "viem": "^2.48.11",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "5.9.3"
+  }
+}

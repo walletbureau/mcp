@@ -1,0 +1,93 @@
+# Publishing @walletbureau/mcp to npm (specs/041-mcp.md §2, DoD §5).
+#
+# THIS FILE IS INACTIVE IN THE MONOREPO: GitHub only reads .github/workflows at the repository
+# root. It lives here because the packages/mcp directory becomes the root of the public
+# walletbureau/mcp repository in its entirety (decision of 2026-08-11, open-core per
+# APPENDIX §12) — after the move the file ends up exactly where it belongs, no edits needed.
+#
+# No long-lived npm tokens, ever: since August 2026 tokens lose account-level operations,
+# and our 2FA is a WebAuthn passkey which cannot be entered in CI at all. This workflow
+# publishes only via trusted publishing (OIDC), where npm trusts GitHub Actions itself.
+#
+# NOTE: OIDC does not work for the FIRST publish of a new package — npm's trusted publisher
+# is configured on the settings page of an already-existing package. The first release is
+# therefore done manually by the maintainer (local `npm publish` with passkey 2FA); every
+# release after that goes through this workflow.
+#
+# BEFORE THE FIRST CI RUN — once on npmjs.com, package settings → Trusted Publisher:
+#   Organization/user: walletbureau · Repository: mcp · Workflow filename: publish.yml
+#   Allowed actions: npm publish
+# npm generates provenance on its own: the repository and the package are public, and the
+# repository field in package.json points to this same repository. No secrets needed.
+name: publish
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Without this npm gets no OIDC token and goes looking for a nonexistent npm token.
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted publishing requires npm >= 11.5.1. Node 24 ships a recent npm, but the
+      # runner image version is not our contract, so we pin it explicitly.
+      - name: Ensure npm supports trusted publishing
+        run: |
+          npm install -g npm@latest
+          npm --version
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      # The package must install without lifecycle scripts (DoD 041 §5): their absence is
+      # asserted here rather than left to review — with them the one-line install breaks
+      # for everyone who has not run `npm approve-scripts`.
+      - name: Assert the package has no install scripts
+        run: |
+          node -e "
+            const s = require('./package.json').scripts ?? {};
+            const forbidden = ['preinstall', 'install', 'postinstall', 'prepare'].filter(k => k in s);
+            if (forbidden.length) { console.error('lifecycle scripts must not ship: ' + forbidden); process.exit(1); }
+          "
+
+      - name: Assert the built CLI is publishable
+        run: |
+          test -f dist/cli.js || { echo 'dist/cli.js is missing — the build did not run'; exit 1; }
+          head -1 dist/cli.js | grep -q '^#!/usr/bin/env node' || { echo 'dist/cli.js lost its shebang'; exit 1; }
+
+      # The package version and the tag must match: otherwise npm receives something other
+      # than what the git tag marks.
+      - name: Assert the tag matches the package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF#refs/tags/v}"
+          version="$(node -p 'require("./package.json").version')"
+          test "$tag" = "$version" || { echo "tag v$tag != package version $version"; exit 1; }
+
+      - name: Show what will be published
+        run: npm pack --dry-run
+
+      # No NODE_AUTH_TOKEN and no --provenance: npm detects the OIDC environment itself and
+      # signs provenance for a public package from a public repository on its own.
+      - name: Publish
+        run: npm publish

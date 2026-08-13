@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  // The only monorepo package that does NOT extend ../../tsconfig.base.json. The reason is
+  // open-core (041 §2): the directory moves to the public walletbureau/mcp repository in
+  // its entirety and must build where no monorepo exists. The settings mirror the base;
+  // when the base changes, reconcile this file by hand.
+  "compilerOptions": {
+    "target": "es2023",
+    "lib": ["es2023"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
+
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+
+    "composite": true,
+    "declaration": true,
+    "skipLibCheck": true,
+
+    // Only working JS ships to npm: no comments and no maps that would reference the
+    // src directory absent from the tarball.
+    "removeComments": true,
+    "sourceMap": false,
+    "declarationMap": false,
+
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"]
+}

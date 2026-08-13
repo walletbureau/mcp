@@ -1,0 +1,42 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.walletbureau/mcp",
+  "description": "Check the behavioral risk score of a Base wallet before paying it: 0-100 score, verdict and explained risk flags from the full history of x402/EIP-3009 USDC transfers. Pay per call with x402 or a prepaid API key; free demo quota without any setup.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/walletbureau/mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://walletbureau.com",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@walletbureau/mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "WALLETBUREAU_API_KEY",
+          "description": "Prepaid WalletBureau API key (atk_...). Optional: without any credentials the server runs on the free demo quota.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "X402_PRIVATE_KEY",
+          "description": "Private key of a wallet holding USDC on Base to pay per call via x402. Optional; ignored when WALLETBUREAU_API_KEY is set.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "X402_MAX_PRICE_USD",
+          "description": "Spending cap per call in USD for x402 payments. Default: 0.1.",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

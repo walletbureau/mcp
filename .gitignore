@@ -1,0 +1,6 @@
+# Needed by the public walletbureau/mcp repository, which receives this directory in its
+# entirety (041 §2). In the monorepo the same rules already exist in the root .gitignore.
+node_modules/
+dist/
+*.tsbuildinfo
+*.tgz
