@@ -28,7 +28,7 @@
     "node": ">=20"
   },
   "bin": {
-    "walletbureau-mcp": "./dist/cli.js"
+    "walletbureau-mcp": "dist/cli.js"
   },
   "main": "./dist/server.js",
   "types": "./dist/server.d.ts",
