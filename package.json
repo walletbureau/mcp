@@ -1,6 +1,6 @@
 {
   "name": "@walletbureau/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "mcpName": "com.walletbureau/mcp",
   "type": "module",
   "description": "MCP server for WalletBureau: check the behavioral risk score of a Base wallet before paying it. Pay per call with x402 or a prepaid API key.",

@@ -45,13 +45,13 @@ checks per day — which is enough to try it. To keep going, pick a payment mode
 
 ## Paying for checks
 
-A full check costs **$0.05**. The server picks its mode from the environment:
+A full check costs **$0.01**. The server picks its mode from the environment:
 
 | Mode | Set this | What happens |
 |---|---|---|
 | **Free demo** | nothing | Uses the public demo quota (a few checks per day per IP). |
 | **Prepaid key** | `WALLETBUREAU_API_KEY=atk_…` | Each check is debited from the key's balance. No crypto involved. |
-| **Wallet (x402)** | `X402_PRIVATE_KEY=0x…` | The server pays $0.05 in USDC on Base per check, automatically, over [x402](https://x402.org). |
+| **Wallet (x402)** | `X402_PRIVATE_KEY=0x…` | The server pays $0.01 in USDC on Base per check, automatically, over [x402](https://x402.org). |
 
 If both are set, the prepaid key wins — its balance is already paid for, and an on-chain payment
 would be a second charge.
